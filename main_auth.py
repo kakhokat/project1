@@ -1,7 +1,6 @@
 from flask import Flask, render_template, redirect, request
 from flask_login import LoginManager, login_user, current_user, login_required, logout_user
 from flask_restful import abort
-from flask_ngrok import run_with_ngrok
 
 from data import db_session
 from data.news import News, NewsForm
@@ -162,9 +161,9 @@ def main():
         else:
             abort(404)
         return redirect('/')
-    run_with_ngrok(app)
-    app.run()
-    
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
 
 if __name__ == '__main__':
     main()
