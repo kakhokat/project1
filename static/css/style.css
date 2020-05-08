@@ -1,0 +1,23 @@
+p {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+h1 {
+    	font-family: Geneva, 'Times New Roman', Times, serif;
+	text-align: center;
+   } 
+h2 {
+    	font-family: Geneva, 'Times New Roman', Times, serif;
+   }
+div {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+hr {
+	border: none;
+	height: 2px;
+	background-color: grey;
+	color: grey;
+}
+body {
+	background: #212121;
+	color: #FFFFFF;
+}
