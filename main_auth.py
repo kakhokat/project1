@@ -6,6 +6,7 @@ from data import db_session
 from data.news import News, NewsForm
 from data.register import LoginForm, RegisterForm
 from data.users import User
+import os
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -71,8 +72,10 @@ def main():
         global admin
         session = db_session.create_session()
         q = request.args.get('q')
-        if q:
-            news = session.query(News).filter(News.title.contains(q) | News.content.contains(q) & (News.is_private != True))
+        if q and current_user.is_authenticated:
+            news = session.query(News).filter(((News.title.contains(q)) | (News.content.contains(q))) & ((News.user == current_user) | (News.is_private != True)))
+        elif q:
+            news = session.query(News).filter((News.title.contains(q)) | (News.content.contains(q)) & (News.is_private != True))
         elif current_user.is_authenticated:
             news = session.query(News).filter((News.user == current_user) | (News.is_private != True))
         else:
@@ -114,10 +117,7 @@ def main():
             else:
                 news = session.query(News).filter(News.id == id,
                                               News.user == current_user).first()
-            if admin == "да" and news:
-                form.title.data = news.title
-                form.content.data = news.content
-            elif news:
+            if news:
                 form.title.data = news.title
                 form.content.data = news.content
                 form.is_private.data = news.is_private
@@ -130,12 +130,7 @@ def main():
             else:
                 news = session.query(News).filter(News.id == id,
                                               News.user == current_user).first()
-            if admin == "да" and news:
-                form.title.data = news.title
-                form.content.data = news.content
-                session.commit()
-                return redirect('/')
-            elif news:
+            if news:
                 news.title = form.title.data
                 news.content = form.content.data
                 news.is_private = form.is_private.data
@@ -143,7 +138,7 @@ def main():
                 return redirect('/')
             else:
                 abort(404)
-        return render_template('news.html', title='Редактирование новости', form=form, admin=admin)
+        return render_template('news.html', title='Редактирование новости', form=form)
 
     @app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
     @login_required
@@ -163,7 +158,7 @@ def main():
         return redirect('/')
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
-
+    
 
 if __name__ == '__main__':
     main()
