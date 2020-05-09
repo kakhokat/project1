@@ -72,7 +72,7 @@ def main():
         session = db_session.create_session()
         q = request.args.get('q')
         if q:
-            news = session.query(News).filter(News.title.contains(q) | News.content.contains(q) & (News.is_private != True))
+            news = session.query(News).filter(News.title.contains(q) | News.content.contains(q) & (News.user == current_user) | (News.is_private != True))
         elif current_user.is_authenticated:
             news = session.query(News).filter((News.user == current_user) | (News.is_private != True))
         else:
